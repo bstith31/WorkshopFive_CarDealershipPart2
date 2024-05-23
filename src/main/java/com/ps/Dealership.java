@@ -122,4 +122,7 @@ public class Dealership {
                 ", phone='" + phone + '\'' +
                 '}';
     }
+
+    public void removeVehicleByVin(String vehicleVin) {
+    }
 }

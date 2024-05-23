@@ -23,6 +23,7 @@ public class UserInterface {
             System.out.println("7- List ALL vehicles");
             System.out.println("8- Add a vehicle");
             System.out.println("9- Remove a vehicle");
+            System.out.println("10- Contract Details");
             System.out.println("99- Quit");
 
             System.out.print("Please choose an option: ");
@@ -56,6 +57,9 @@ public class UserInterface {
                     break;
                 case 9:
                     processRemoveVehicleRequest();
+                    break;
+                case 10:
+                    processContractDetailsRequest();
                     break;
                 case 99:
                     break;
@@ -194,5 +198,65 @@ public class UserInterface {
         }
 
         System.out.println("Vehicle not found");
+    }
+
+    public void processContractDetailsRequest(){
+
+        System.out.println("Enter contract details:");
+        scanner.nextLine(); // Consume newline character
+
+        System.out.print("Date (YYYY-MM-DD): ");
+        String date = scanner.nextLine();
+
+        System.out.print("Customer name: ");
+        String customerName = scanner.nextLine();
+
+        System.out.print("Customer email: ");
+        String customerEmail = scanner.nextLine();
+
+        System.out.print("Vehicle VIN: ");
+        String vehicleVin = scanner.nextLine();
+
+        System.out.print("Price: ");
+        double price = scanner.nextDouble();
+
+        System.out.print("Do you want to finance (YES/NO): ");
+        String financeChoice = scanner.next();
+        boolean finance = financeChoice.equalsIgnoreCase("Yes");
+
+        Contract contract;
+
+        if (finance) {
+            System.out.println("Enter financing details:");
+            System.out.print("Enter 'SALE' or 'LEASE': ");
+            String contractType = scanner.next();
+            if (contractType.equalsIgnoreCase("Sale")) {
+                contract = new SalesContract(date, customerName, customerEmail, vehicleVin, finance, price);
+            } else if (contractType.equalsIgnoreCase("Lease")) {
+                contract = new LeaseContract(date, customerName, customerEmail, vehicleVin, price);
+            } else {
+                System.out.println("Invalid contract type.");
+                return;
+            }
+        } else {
+            System.out.println("Enter 'SALE' or 'LEASE': ");
+            String contractType = scanner.next();
+            if (contractType.equalsIgnoreCase("Sale")) {
+                contract = new SalesContract(date, customerName, customerEmail, vehicleVin, finance, price);
+            } else if (contractType.equalsIgnoreCase("Lease")) {
+                contract = new LeaseContract(date, customerName, customerEmail, vehicleVin, price);
+            } else {
+                System.out.println("Invalid contract type.");
+                return;
+            }
+        }
+
+        ContractFileManager.saveContract(contract, "contracts.txt");
+
+        // Remove vehicle from inventory
+        dealership.removeVehicleByVin(vehicleVin);
+        DealershipFileManager.saveDealership(this.dealership);
+
+        System.out.println("Contract information has been processed");
     }
 }
